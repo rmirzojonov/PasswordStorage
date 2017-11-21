@@ -71,6 +71,42 @@ namespace PasswordStorage.Services
             }
             return false;
         }
+
+        public void Add(string text, string password)
+        {
+            var account = AccountStore.Create().FindAccountsForService(App.AppName).FirstOrDefault();
+            if (account != null && !string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(password))
+            {
+                if (!account.Properties.ContainsKey(text))
+                {
+                    account.Properties.Add(text, password);
+
+                    AccountStore.Create().Save(account, App.AppName);
+                }
+            }
+        }
+        public void Update(string text, string password)
+        {
+            var account = AccountStore.Create().FindAccountsForService(App.AppName).FirstOrDefault();
+            if (account != null && !string.IsNullOrEmpty(text))
+            {
+                if (account.Properties.ContainsKey(text))
+                {
+                    account.Properties[text] = password;
+
+                    AccountStore.Create().Save(account, App.AppName);
+                }
+            }
+        }
+        public void Remove(string text)
+        {
+            var account = AccountStore.Create().FindAccountsForService(App.AppName).FirstOrDefault();
+            if (account != null && !string.IsNullOrEmpty(text))
+            {
+                account.Properties.Remove(text);
+                AccountStore.Create().Save(account, App.AppName);
+            }
+        }
         public bool SaveCredentials(string userName, string password)
         {
             if (!string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(password))

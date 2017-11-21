@@ -13,15 +13,6 @@ namespace PasswordStorage
         public MockDataStore()
         {
             items = new List<Item>();
-            //var mockItems = new List<Item>
-            //{
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "First item", Password="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Second item", Password="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Third item", Password="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Fourth item", Password="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Fifth item", Password="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Sixth item", Password="This is an item description." },
-            //};
             foreach(var i in App.Auth.CustomPasswords)
             {
                 var item = new Item()
@@ -32,16 +23,12 @@ namespace PasswordStorage
                 };
                 items.Add(item);
             }
-            //foreach (var item in mockItems)
-            //{
-            //    items.Add(item);
-            //}
         }
 
         public async Task<bool> AddItemAsync(Item item)
         {
             items.Add(item);
-
+            App.Auth.Add(item.Text, item.Password);
             return await Task.FromResult(true);
         }
 
@@ -50,6 +37,7 @@ namespace PasswordStorage
             var _item = items.Where((Item arg) => arg.Id == item.Id).FirstOrDefault();
             items.Remove(_item);
             items.Add(item);
+            App.Auth.Update(item.Text, item.Password);
 
             return await Task.FromResult(true);
         }
@@ -58,6 +46,7 @@ namespace PasswordStorage
         {
             var _item = items.Where((Item arg) => arg.Id == id).FirstOrDefault();
             items.Remove(_item);
+            App.Auth.Remove(_item.Text);
 
             return await Task.FromResult(true);
         }
